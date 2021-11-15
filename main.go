@@ -44,4 +44,5 @@ func main() {
 	// for _, tx := range block.Data.Txs {
 	// 	fmt.Println(tx)
 	// }
+
 }

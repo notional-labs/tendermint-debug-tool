@@ -30,8 +30,7 @@ func readHexStringFileOfParts(fileDir string) []string {
 }
 
 func main() {
-	homeDir, _ := os.UserHomeDir()
-	hexStrings := readHexStringFileOfParts(homeDir + "/block0")
+	hexStrings := readHexStringFileOfParts("evil_blocks/block0")
 	ps, err := tmdata.GetPartSetFromHexStrings(hexStrings)
 	if err != nil {
 		fmt.Println("err")
@@ -40,9 +39,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%+v\n", block)
+	// fmt.Printf("%+v\n", block)
 	// for _, tx := range block.Data.Txs {
 	// 	fmt.Println(tx)
 	// }
-
+	// tx, err := tmdata.DecodeTx(block.Data.Txs[0])
+	// if err == nil {
+	// 	fmt.Printf("%+v\n", tx)
+	// } else {
+	// 	fmt.Println(err, 12)
+	// }
+	tmdata.DecodeTx(block.Data.Txs[0])
+	fmt.Println(len(block.Data.Txs[0]))
 }

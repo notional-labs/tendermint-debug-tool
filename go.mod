@@ -5,10 +5,10 @@ go 1.16
 require (
 	github.com/cosmos/cosmos-sdk v0.44.3
 	github.com/gogo/protobuf v1.3.3
+	github.com/sentinel-official/hub v0.8.3
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.14
 	github.com/tendermint/tm-db v0.6.4
-	google.golang.org/grpc v1.37.0 // indirect
 
 )
 

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/notional-labs/test/tmdata"
 )
@@ -49,6 +50,17 @@ func main() {
 	// } else {
 	// 	fmt.Println(err, 12)
 	// }
-	tmdata.DecodeTx(block.Data.Txs[0])
-	fmt.Println(len(block.Data.Txs[0]))
+
+	// txBz, _ := hex.DecodeString(hexString)
+	// fmt.Println(hex.EncodeToString(block.Data.Txs[0].Hash()))
+
+	// tx, err := tmdata.DecodeTx(block.Data.Txs[0])
+	length := 0
+	for _, i := range block.Data.Txs {
+		length += len(i)
+	}
+	fmt.Println(length)
+	fmt.Println(int(999999999999999999))
+	time.Sleep(1)
+	fmt.Println(999)
 }

@@ -3,48 +3,68 @@ package main
 import (
 	"bufio"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"strconv"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/notional-labs/test/tmdata"
 )
 
-func readHexStringFileOfParts(fileDir string) []string {
-	file, err := os.Open(fileDir)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-	reader := bufio.NewReader(file)
-	hexStrings := []string{}
-	for {
-		hexString, err := reader.ReadString('\n')
-		if err != nil {
-			break
-		}
-		hexString = hexString[:len(hexString)-1]
-		// hexString = strings.ReplaceAll(hexString, "\n", "")
-		// fmt.Println(strings.Contains(hexString, "\n"))
-		hexStrings = append(hexStrings, hexString)
-	}
-	return hexStrings
+type TxList struct {
+	Txs []string
 }
 
-func main() {
-	tx := "CqEBCpwBCjcvY29zbW9zLmRpc3RyaWJ1dGlvbi52MWJldGExLk1zZ1dpdGhkcmF3RGVsZWdhdG9yUmV3YXJkEmEKK2p1bm8xcGx2NHE2OGE5ZHVnNGxsczU2Znk3NHB6czZ5bTN5dmN1bjY2dG4SMmp1bm92YWxvcGVyMTN2NHNwc2FoODVwczR2dHJ3MDd2emVhMzdncTVsYTVna3Rsa2V1EgASZgpQCkYKHy9jb3Ntb3MuY3J5cHRvLnNlY3AyNTZrMS5QdWJLZXkSIwohA0YeP6kAW7305XbCN9ZA1hY25A46uBEs0gKP5BqCaT9ZEgQKAgh/GA0SEgoMCgV1anVubxIDMzUwEODFCBpASBNuIMKnD8BBHoVuDELkbTorc2tLb0yBImUqQadS021SXYeyefuRYVMyvFlddwGC1lA5zbOd+TXHCvOoBOjtDg=="
+func LoadTxsFromFile(fileLocation string) ([]string, error) {
+	file, err := os.Open(fileLocation)
+	if err != nil {
+		fmt.Println("Unable to open json at " + fileLocation)
+		return nil, err
+	}
+	reader := bufio.NewReader(file)
+	jsonData, _ := ioutil.ReadAll(reader)
 
-	tx_byte, err := base64.StdEncoding.DecodeString(tx)
+	var txList TxList
+	jsonErr := json.Unmarshal(jsonData, &txList)
+	if jsonErr != nil {
+		fmt.Println("Unable to map JSON at " + fileLocation + " to Investments")
+		return nil, jsonErr
+	}
+	return txList.Txs, nil
+}
+
+func decodeTxFromBase64(base64Tx string) (sdk.Tx, error) {
+
+	tx_byte, err := base64.StdEncoding.DecodeString(base64Tx)
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	sdk_tx, err := tmdata.DecodeTx(tx_byte)
 	if err != nil {
+		return nil, err
+	}
+	return sdk_tx, nil
+}
+
+func main() {
+	base64Txs, err := LoadTxsFromFile("test_txs")
+	if err != nil {
 		panic(err)
 	}
-	for _, i := range sdk_tx.GetMsgs() {
-		fmt.Printf("%+v", i)
+	for i, base64tx := range base64Txs {
+		sdk_tx, err := decodeTxFromBase64(base64tx)
+		fmt.Println("tx number " + strconv.Itoa(i))
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		for _, i := range sdk_tx.GetMsgs() {
+			fmt.Printf("%+v\n", i)
+		}
 	}
 
 }

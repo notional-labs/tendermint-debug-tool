@@ -5,10 +5,9 @@ go 1.16
 require (
 	github.com/cosmos/cosmos-sdk v0.44.3
 	github.com/gogo/protobuf v1.3.3
+	github.com/jaekwon/testify v1.6.1
 	github.com/sentinel-official/hub v0.8.3
-	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.14
-	github.com/tendermint/tm-db v0.6.4
 
 )
 

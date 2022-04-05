@@ -2,9 +2,9 @@ package main
 
 import (
 	"bufio"
+	"encoding/base64"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/notional-labs/test/tmdata"
 )
@@ -31,36 +31,20 @@ func readHexStringFileOfParts(fileDir string) []string {
 }
 
 func main() {
-	hexStrings := readHexStringFileOfParts("evil_blocks/block0")
-	ps, err := tmdata.GetPartSetFromHexStrings(hexStrings)
-	if err != nil {
-		fmt.Println("err")
-	}
-	block, err := tmdata.GetBlockFromPartSet(ps)
+	tx := "CqEBCpwBCjcvY29zbW9zLmRpc3RyaWJ1dGlvbi52MWJldGExLk1zZ1dpdGhkcmF3RGVsZWdhdG9yUmV3YXJkEmEKK2p1bm8xcGx2NHE2OGE5ZHVnNGxsczU2Znk3NHB6czZ5bTN5dmN1bjY2dG4SMmp1bm92YWxvcGVyMTN2NHNwc2FoODVwczR2dHJ3MDd2emVhMzdncTVsYTVna3Rsa2V1EgASZgpQCkYKHy9jb3Ntb3MuY3J5cHRvLnNlY3AyNTZrMS5QdWJLZXkSIwohA0YeP6kAW7305XbCN9ZA1hY25A46uBEs0gKP5BqCaT9ZEgQKAgh/GA0SEgoMCgV1anVubxIDMzUwEODFCBpASBNuIMKnD8BBHoVuDELkbTorc2tLb0yBImUqQadS021SXYeyefuRYVMyvFlddwGC1lA5zbOd+TXHCvOoBOjtDg=="
+
+	tx_byte, err := base64.StdEncoding.DecodeString(tx)
+
 	if err != nil {
 		panic(err)
 	}
-	// fmt.Printf("%+v\n", block)
-	// for _, tx := range block.Data.Txs {
-	// 	fmt.Println(tx)
-	// }
-	// tx, err := tmdata.DecodeTx(block.Data.Txs[0])
-	// if err == nil {
-	// 	fmt.Printf("%+v\n", tx)
-	// } else {
-	// 	fmt.Println(err, 12)
-	// }
 
-	// txBz, _ := hex.DecodeString(hexString)
-	// fmt.Println(hex.EncodeToString(block.Data.Txs[0].Hash()))
-
-	// tx, err := tmdata.DecodeTx(block.Data.Txs[0])
-	length := 0
-	for _, i := range block.Data.Txs {
-		length += len(i)
+	sdk_tx, err := tmdata.DecodeTx(tx_byte)
+	if err != nil {
+		panic(err)
 	}
-	fmt.Println(length)
-	fmt.Println(int(999999999999999999))
-	time.Sleep(1)
-	fmt.Println(999)
+	for _, i := range sdk_tx.GetMsgs() {
+		fmt.Printf("%+v", i)
+	}
+
 }
